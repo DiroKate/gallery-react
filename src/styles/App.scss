@@ -1,0 +1,68 @@
+html,body{
+  width: 100%;
+  height: 100%;
+  background-color: #222;
+}
+.content{
+  width: 100%;
+  height: 100%;
+}
+
+.stage {
+  position: relative;
+  width: 100%;
+  height: 680px;
+}
+.img-sec {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: #ddd;
+
+  // perspective: 1800px;
+  @at-root {
+    .img-figure {
+      position: absolute;
+      width: 320;
+      height: 360px;
+      margin: 0;
+      padding: 40px;
+
+      background-color: white;
+      box-sizing: border-box;
+
+    }
+  }
+  figcaption {
+    text-align: center;
+    .image-title {
+      margin: 20px 0 0 0;
+      color: #a7a0a2;
+      font-size: 16px;
+    }
+    .img-back {
+      position: absolute;
+      top: 0;
+      left: 0;
+
+      width: 100%;
+      height: 100%;
+      padding: 50px 40px;
+      overflow: auto;
+
+      color: #a7a0a2;
+      font-size: 22px;
+      line-height: 1.25;
+      text-align: left;
+
+      background-color: #fff;
+
+      box-sizing: border-box;
+    }
+    p {
+      margin: 0;
+    }
+  }
+
+}
