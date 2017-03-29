@@ -4,8 +4,11 @@ require('styles/App.scss');
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+/**
+ * 读取图片信息
+ * @return {Array} 返回一个图片信息数组
+ */
 let imageDatas = require('data/imageDatas.json');
-
 imageDatas = (function getImageURL(imageDatasArray) {
   for (var i = 0; i < imageDatasArray.length; i++) {
     var singleImageData = imageDatasArray[i];
@@ -15,16 +18,38 @@ imageDatas = (function getImageURL(imageDatasArray) {
   return imageDatasArray;
 })(imageDatas);
 
+/**
+ * 获取范围内的一个整数
+ * @param  {integer} low  最小值
+ * @param  {integer} high 最大值
+ * @return {integer}      返回范围内的随机值
+ */
 let getRangeRadom = function(low, high) {
   return Math.ceil(Math.random() * (high - low) + low);
+};
+
+/**
+ * 获取正负30之间的随机值
+ * @return {integer} 正负30之间的随机值
+ */
+let get30DegRamdon = function() {
+  return ((Math.random() > 0.5 ? 1 : -1) * Math.ceil(Math.random() * 30));
 }
 
 var ImgFigure = React.createClass({
 
   render: function() {
     var styleObj = {};
+
+    // 使用指定的props信息
     if (this.props.arrange.pos) {
       styleObj = this.props.arrange.pos;
+    }
+    // 如果旋转角度存在且不为零，添加旋转角度
+    if (this.props.arrange.rotate) {
+      (['MozTransform', 'msTransform', 'WebkitTransform', 'transform']).forEach(function(value) {
+        styleObj[value] = 'rotate(' + this.props.arrange.rotate + 'deg)';
+      }.bind(this));
     }
 
     return (
@@ -64,7 +89,6 @@ var AppComponent = React.createClass({
       ],
       topY: [0, 0]
     }
-
   },
   /**
    * 重新计算图片位置
@@ -83,7 +107,8 @@ var AppComponent = React.createClass({
     // 处理中心图片
     let imgsArrangeCenterArr = imgsArrangeArr.splice(centerIndex, 1);
     imgsArrangeCenterArr[0] = {
-      pos: centerPos
+      pos: centerPos,
+      rotate: 0
     }
 
     // 处理上半部图片
@@ -100,7 +125,8 @@ var AppComponent = React.createClass({
         pos: {
           left: getRangeRadom(vPosRangeX[0], vPosRangeX[1]),
           top: getRangeRadom(vPosRangeTopY[0], vPosRangeTopY[1])
-        }
+        },
+        rotate: get30DegRamdon()
       }
     });
 
@@ -119,7 +145,8 @@ var AppComponent = React.createClass({
         pos: {
           top: getRangeRadom(hPosRangeY[0], hPosRangeY[1]),
           left: getRangeRadom(hPosRangeLeftOrRightX[0], hPosRangeLeftOrRightX[1])
-        }
+        },
+        rotate: get30DegRamdon()
       };
     }
 
@@ -198,7 +225,8 @@ var AppComponent = React.createClass({
           pos:{
             left: 0,
             top: 0
-          }
+          },
+          rotate: 0
         }
       }
       imgFigures.push(
