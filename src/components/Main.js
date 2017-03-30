@@ -38,6 +38,19 @@ let get30DegRamdon = function() {
 
 var ImgFigure = React.createClass({
 
+  /**
+   * ImgFigure点击事件处理函数
+   */
+  handleClick: function (e) {
+    if (this.props.arrange.isCenter) {
+      this.props.inverse();
+    } else {
+      this.props.center();
+    }
+    e.stopPropagation();
+    e.preventDefault();
+  },
+
   render: function() {
     var styleObj = {};
 
@@ -52,13 +65,20 @@ var ImgFigure = React.createClass({
       }.bind(this));
     }
 
+    if (this.props.arrange.isCenter) {
+      styleObj.zIndex = 11;
+    }
+    var imgFigureClassName = 'img-figure';
+    imgFigureClassName += this.props.arrange.isInverse ? ' is-inverse' : '';
+
     return (
-      <figure className='img-figure' style={styleObj}>
+      <figure className={imgFigureClassName} style={styleObj} onClick={this.handleClick}>
         <img src={this.props.data.imageURL} alt={this.props.data.title}/>
         <figcaption>
-          <h2 className="img-title">
-            {this.props.data.title}
-          </h2>
+          <h2 className="img-title">{this.props.data.title}</h2>
+          <div className='img-back' onClick={this.handleClick}>
+            <p>{this.props.data.description}</p>
+          </div>
         </figcaption>
       </figure>
     );
@@ -91,6 +111,22 @@ var AppComponent = React.createClass({
     }
   },
   /**
+   * 翻转图片
+   * @param  {intege} index 图片索引
+   * @return {function}       闭包函数
+   */
+  inverse: function(index) {
+    return function() {
+      var imgsArrangeArr = this.state.imgsArrangeArr;
+      imgsArrangeArr[index].isInverse = !imgsArrangeArr[index].isInverse;
+
+      this.setState({
+        imgsArrangeArr: imgsArrangeArr
+      });
+    }.bind(this);
+  },
+
+  /**
    * 重新计算图片位置
    * @param  {integer} centerIndex 中心图片的索引
    */
@@ -108,7 +144,8 @@ var AppComponent = React.createClass({
     let imgsArrangeCenterArr = imgsArrangeArr.splice(centerIndex, 1);
     imgsArrangeCenterArr[0] = {
       pos: centerPos,
-      rotate: 0
+      rotate: 0,
+      isCenter: true
     }
 
     // 处理上半部图片
@@ -126,7 +163,8 @@ var AppComponent = React.createClass({
           left: getRangeRadom(vPosRangeX[0], vPosRangeX[1]),
           top: getRangeRadom(vPosRangeTopY[0], vPosRangeTopY[1])
         },
-        rotate: get30DegRamdon()
+        rotate: get30DegRamdon(),
+        isCenter: false
       }
     });
 
@@ -146,7 +184,8 @@ var AppComponent = React.createClass({
           top: getRangeRadom(hPosRangeY[0], hPosRangeY[1]),
           left: getRangeRadom(hPosRangeLeftOrRightX[0], hPosRangeLeftOrRightX[1])
         },
-        rotate: get30DegRamdon()
+        rotate: get30DegRamdon(),
+        isCenter: false
       };
     }
 
@@ -160,6 +199,13 @@ var AppComponent = React.createClass({
       imgsArrangeArr: imgsArrangeArr
     });
   },
+
+  center: function(index) {
+    return (function() {
+      this.rerange(index);
+    }.bind(this));
+  },
+
   getInitialState: function() {
     return {
       imgsArrangeArr: [
@@ -226,11 +272,13 @@ var AppComponent = React.createClass({
             left: 0,
             top: 0
           },
-          rotate: 0
+          rotate: 0,
+          isInverse: false,
+          isCenter: false
         }
       }
       imgFigures.push(
-        <ImgFigure key={index} data={value} ref={'imgFigure' + index} arrange={this.state.imgsArrangeArr[index]}/>
+        <ImgFigure key={index} data={value} ref={'imgFigure' + index} arrange={this.state.imgsArrangeArr[index]} inverse={this.inverse(index)} center={this.center(index)}/>
       );
     }.bind(this));
     return (
