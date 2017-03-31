@@ -85,6 +85,38 @@ var ImgFigure = React.createClass({
   }
 });
 
+/**
+ * 控制组件
+ * @type {React component}
+ */
+var ControllerUnit = React.createClass({
+  handleClick : function(e){
+
+    if (this.props.arrange.isCenter) {
+      this.props.inverse();
+    } else {
+      this.props.center();
+    }
+    e.stopPropagation();
+    e.preventDefault();
+  },
+
+  render: function() {
+
+    let controllerUnitClassName = 'controller-unit';
+    if (this.props.arrange.isCenter) {
+      controllerUnitClassName += ' is-center';
+      if (this.props.arrange.isInverse) {
+        controllerUnitClassName += ' is-inverse';
+      }
+    }
+
+    return (
+      <span className={controllerUnitClassName} onClick={this.handleClick}></span>
+    );
+  }
+});
+
 var AppComponent = React.createClass({
 
   Constant: {
@@ -257,14 +289,12 @@ var AppComponent = React.createClass({
     this.Constant.hPosRange.rightSecX[0] = halfStageW + halfFigureW;
     this.Constant.hPosRange.rightSecX[1] = stageW - halfFigureW;
 
-
-
     this.rerange(0);
 
   },
-
   render: function() {
-    let imgFigures = [];
+    let imgFigures = [],
+      controllerUnits = [];
     imageDatas.forEach(function(value, index) {
       if (!this.state.imgsArrangeArr[index]) {
         this.state.imgsArrangeArr[index] = {
@@ -280,12 +310,24 @@ var AppComponent = React.createClass({
       imgFigures.push(
         <ImgFigure key={index} data={value} ref={'imgFigure' + index} arrange={this.state.imgsArrangeArr[index]} inverse={this.inverse(index)} center={this.center(index)}/>
       );
+
+      controllerUnits.push(
+        <ControllerUnit key={index} arrange={this.state.imgsArrangeArr[index]} inverse={this.inverse(index)} center={this.center(index)}/>
+      );
+
     }.bind(this));
+
+
+
+
     return (
       <section className="stage" ref="stage">
         <section className="img-sec">
           {imgFigures}
         </section>
+        <nav className="controller-nav">
+          {controllerUnits}
+        </nav>
       </section>
     );
   }
