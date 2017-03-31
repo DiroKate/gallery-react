@@ -19,8 +19,8 @@
     "test:watch": "karma start --autoWatch=true --singleRun=false"
   },
   "repository": "",
-  "keywords": [],
-  "author": "Your name here",
+  "keywords": [ "React" ],
+  "author": "Diroguan",
   "devDependencies": {
     "babel-core": "^6.0.0",
     "babel-eslint": "^6.0.0",
